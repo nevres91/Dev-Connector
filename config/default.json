@@ -1,6 +1,0 @@
-{
-  "mongoURI": "mongodb+srv://nevres123:nevres123@atlascluster.kxb1jlp.mongodb.net/?retryWrites=true&w=majority",
-  "jwtSecret": "mysecrettoken" ,
-  "githubClientId": "82237d5febd907c5ea6e",
-  "githubSecret": "a975db5475ac365be773a413f43548ba36f1f73b"
-}

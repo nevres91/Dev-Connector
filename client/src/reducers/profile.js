@@ -1,4 +1,4 @@
-import { GET_PROFILE, PROFILE_ERROR, CLEAR_PROFILE } from "../actions/types";
+import { GET_PROFILE, PROFILE_ERROR, CLEAR_PROFILE, UPDATE_PROFILE, GET_PROFILES, GET_REPOS, RESET_PPROFILE_LOADING } from "../actions/types";
 
 const initialState = {
   profile: null, // when we log in its gonna make request, its gonna hold all of our profile data also when we visit another users profile page.
@@ -16,10 +16,17 @@ function profileReducer(state = initialState, action)
   switch (type)
   {
     case GET_PROFILE:
+    case UPDATE_PROFILE:
       return {
         ...state,
         profile: payload,
         loading: false,
+      }
+    case GET_PROFILES:
+      return {
+        ...state,
+        profiles: payload,
+        loading: false
       }
     case PROFILE_ERROR:
       return {
@@ -33,6 +40,17 @@ function profileReducer(state = initialState, action)
         ...state,
         profile: null,
         repos: [],
+        loading: false
+      }
+    case RESET_PPROFILE_LOADING:
+      return {
+        ...state,
+        loading: true
+      }
+    case GET_REPOS:
+      return {
+        ...state,
+        repos: payload,
         loading: false
       }
     default:

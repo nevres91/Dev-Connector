@@ -1,11 +1,11 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { createProfile } from '../../actions/profile'
+import { createProfile, getCurrentProfile } from '../../actions/profile'
 import { Link, useNavigate } from 'react-router-dom' // this will allow us to redirect from the action
 
 
-const CreateProfile = ({ createProfile }) =>
+const EditProfile = ({ profile: { profile, loading }, createProfile, getCurrentProfile }) =>
 {
 
   const [formData, setFormData] = useState({
@@ -24,6 +24,26 @@ const CreateProfile = ({ createProfile }) =>
   });
 
   const [displaySocialInputs, toggleSocialInputs] = useState(false)
+  useEffect(() =>
+  {
+    getCurrentProfile();
+
+    setFormData({
+      company: loading || !profile.company ? '' : profile.company, // if it is loading and there is no profile field then blank, else fill it.
+      website: loading || !profile.website ? '' : profile.website,
+      location: loading || !profile.location ? '' : profile.location,
+      status: loading || !profile.status ? '' : profile.status,
+      skills: loading || !profile.skills ? '' : profile.skills,
+      githubusernam: loading || !profile.githubusernam ? '' : profile.githubusernam,
+      bio: loading || !profile.bio ? '' : profile.bio,
+      twitter: loading || !profile.social ? '' : profile.social.twitter,
+      facebook: loading || !profile.social ? '' : profile.social.facebook,
+      linkedin: loading || !profile.social ? '' : profile.social.linkedin,
+      youtube: loading || !profile.social ? '' : profile.social.youtube,
+      instagram: loading || !profile.social ? '' : profile.social.instagram
+    });
+  }, [loading, getCurrentProfile]);
+
   const navigate = useNavigate();
 
   const {
@@ -45,7 +65,7 @@ const CreateProfile = ({ createProfile }) =>
   const onSubmit = e =>
   {
     e.preventDefault();
-    createProfile(formData, navigate);
+    createProfile(formData, navigate, true);
   }
   return (
     <Fragment>
@@ -110,40 +130,36 @@ const CreateProfile = ({ createProfile }) =>
         </div>
 
         <div className="my-2">
-          <button onClick={() => toggleSocialInputs(!displaySocialInputs)} type="button" className="btn btn-light">
+          <button type="button" className="btn btn-light">
             Add Social Network Links
           </button>
           <span>Optional</span>
         </div>
 
-        {displaySocialInputs && <Fragment>
-          <div className="form-group social-input">
-            <i className="fab fa-twitter fa-2x"></i>
-            <input type="text" placeholder="Twitter URL" name="twitter" value={twitter} onChange={e => onChange(e)} />
-          </div>
+        <div className="form-group social-input">
+          <i className="fab fa-twitter fa-2x"></i>
+          <input type="text" placeholder="Twitter URL" name="twitter" value={twitter} onChange={e => onChange(e)} />
+        </div>
 
-          <div className="form-group social-input">
-            <i className="fab fa-facebook fa-2x"></i>
-            <input type="text" placeholder="Facebook URL" name="facebook" value={facebook} onChange={e => onChange(e)} />
-          </div>
+        <div className="form-group social-input">
+          <i className="fab fa-facebook fa-2x"></i>
+          <input type="text" placeholder="Facebook URL" name="facebook" value={facebook} onChange={e => onChange(e)} />
+        </div>
 
-          <div className="form-group social-input">
-            <i className="fab fa-youtube fa-2x"></i>
-            <input type="text" placeholder="YouTube URL" name="youtube" value={youtube} onChange={e => onChange(e)} />
-          </div>
+        <div className="form-group social-input">
+          <i className="fab fa-youtube fa-2x"></i>
+          <input type="text" placeholder="YouTube URL" name="youtube" value={youtube} onChange={e => onChange(e)} />
+        </div>
 
-          <div className="form-group social-input">
-            <i className="fab fa-linkedin fa-2x"></i>
-            <input type="text" placeholder="Linkedin URL" name="linkedin" value={linkedin} onChange={e => onChange(e)} />
-          </div>
+        <div className="form-group social-input">
+          <i className="fab fa-linkedin fa-2x"></i>
+          <input type="text" placeholder="Linkedin URL" name="linkedin" value={linkedin} onChange={e => onChange(e)} />
+        </div>
 
-          <div className="form-group social-input">
-            <i className="fab fa-instagram fa-2x"></i>
-            <input type="text" placeholder="Instagram URL" name="instagram" value={instagram} onChange={e => onChange(e)} />
-          </div>
-        </Fragment>}
-
-
+        <div className="form-group social-input">
+          <i className="fab fa-instagram fa-2x"></i>
+          <input type="text" placeholder="Instagram URL" name="instagram" value={instagram} onChange={e => onChange(e)} />
+        </div>
         <input type="submit" className="btn btn-primary my-1" />
         <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
       </form>
@@ -151,10 +167,14 @@ const CreateProfile = ({ createProfile }) =>
   )
 }
 
-CreateProfile.propTypes = {
-  createProfile: PropTypes.func.isRequired
+EditProfile.propTypes = {
+  createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired
 }
 
 
-
-export default connect(null, { createProfile })(CreateProfile)
+const mapStateToProps = state => ({
+  profile: state.profile
+})
+export default connect(mapStateToProps, { createProfile, getCurrentProfile })(EditProfile)
